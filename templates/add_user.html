@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>test_flask</title>
+  </head>
+  <body>
+    <form
+      action="/add_user"
+      method="POST"
+      name="Register"
+      onsubmit="return captureFormData()"
+    >
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" placeholder="input todo!!" />
+      <label for="age">Age:</label>
+      <input type="text" id="age" name="age" placeholder="input todo!!" />
+      <input type="submit" value="Add" />
+    </form>
+    <script>
+      function captureFormData() {
+        var name = document.getElementById("name").value;
+        var age = document.getElementById("age").value;
+        var specificData = {
+          name: name,
+          age: age,
+        };
+        //console.log("Name:", name);
+        //console.log("Age:", age);
+        localStorage.setItem("ID", JSON.stringify(specificData));
+        console.log(specificData);
+        return true; // フォームを送信する
+      }
+    </script>
+  </body>
+</html>

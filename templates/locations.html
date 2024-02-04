@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shelter Locations</title>
+  </head>
+  <body>
+    <a href="home">Back to Home</a>
+    <h1>Shelter Locations</h1>
+    <ul>
+      {% for location in location_data %}
+      <li>
+        {{ location.shelter }} - Latitude: {{ location.latitude }}, Longitude:
+        {{ location.longitude }}
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

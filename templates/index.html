@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Sending and Saving Page</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='leaflet/leaflet.css') }}"
+    />
+    <script src="{{ url_for('static', filename='leaflet/leaflet.js') }}"></script>
+  </head>
+  <body>
+    <script>
+      {% for location in location_data %}
+        shelter = {{location.shelter}};
+
+      {% endfor %}
+    </script>
+    <a href="{{ url_for('add_location') }}">Add Shelter Location</a>
+    <a href="{{ url_for('locations') }}">シェルターの位置</a>
+    <!-- TODO
+    最初のアクセスした段階でローカルストレージのデータをアップロード
+    1. テーブルから、アクセスするshelterの情報を取得
+    2. キーから、各シェルターの値を取得
+    3. 各値をアップロード
+    User
+    app.py側で、新たなルートを作成し、ページにアクセスした段階で、ローカルストレージのデータをサーバにアップロードしたい
+    ローカルストレージには下記のようなデータがある。
+    キー：”A"
+    値：{"id":"174831","num":"12","created_at":"2028-01-16 23:47:11.609774"}
+
+    下記の書き方に続く形で、ローカルストレージのデータをapp.pyに届けたい
+    -->
+    <div id="map" style="width: 800px; height: 600px"></div>
+    <form action="/add" method="POST">
+      <label for="shelter">Choose a shlter:</label>
+      <select id="shlter" name="shelter">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+      <label for="num">Num:</label>
+      <input type="text" name="num" placeholder="input todo!!" />
+      <input type="submit" value="Add" />
+    </form>
+
+    {% for d in data %}
+    <p>{{d.id}} : {{d.shelter}} : {{d.num}} :{{d.created_at}}</p>
+    <a href="/del_body/{{ d.id }}">[ delete ]</a>
+    <script>
+      //alert("tes");
+      var specificName = "{{ d.shelter }}";
+      // 既存のローカルストレージのデータを取得
+      var existingData = JSON.parse(localStorage.getItem(specificName)) || {};
+
+      // サーバーから取得したデータと比較
+      var serverCreatedAt = new Date("{{ d.created_at }}");
+      var localCreatedAt = existingData.created_at
+        ? new Date(existingData.created_at)
+        : null;
+
+      if (!localCreatedAt || serverCreatedAt > localCreatedAt) {
+        // 新しいデータを追加
+        var specificData = {
+          id: "{{d.id}}",
+          num: "{{d.num}}",
+          created_at: "{{d.created_at}}",
+        };
+        Object.assign(existingData, specificData);
+
+        // 更新したデータを再びローカルストレージに保存
+        localStorage.setItem(specificName, JSON.stringify(existingData));
+        console.log(specificData);
+      }
+    </script>
+    {% endfor %}
+    <!-- TODO 
+      ここでローカルストレージをupload 
+    -->
+
+    <script>
+      // TODO
+      // Set Viewの中身は設定ファイルなどで、避難所の位置を中心にできるようにする。
+      var map = L.map("map").setView([34.697005, 135.749709], 16);
+      L.tileLayer("static/tiles/{z}/{x}/{y}.png", {
+        maxZoom: 16,
+        minZoom: 2,
+        tileSize: 512,
+        zoomOffset: -1,
+      }).addTo(map);
+
+      // Plot ShelterLocation coordinates on the map
+      {% for location in location_data %}
+        var marker = L.marker([{{ location.latitude }}, {{ location.longitude }}]).addTo(map);
+        marker.bindPopup("Shelter: {{ location.shelter }}<br>Latitude: {{ location.latitude }}<br>Longitude: {{ location.longitude }}");
+      {% endfor %}
+        // Plot Shelter data on the map
+        {% for d in data %}
+        // Assume there is a corresponding ShelterLocation for each shelter in data
+        var shelterLocation = {% for location in location_data %}{% if location.shelter == d.shelter %}{ "latitude": {{ location.latitude }}, "longitude": {{ location.longitude }} }{% endif %}{% endfor %};
+
+        if (shelterLocation) {
+          var shelterMarker = L.marker([shelterLocation.latitude, shelterLocation.longitude]).addTo(map);
+          shelterMarker.bindPopup("Shelter: {{ d.shelter }}<br>Num: {{ d.num }}<br>Created At: {{ d.created_at }}");
+        }
+      {% endfor %}
+    </script>
+  </body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Sending and Saving Page</title>
+    <!--<link rel="stylesheet" href="./leaflet/leaflet.css" />-->
+    <!--<script src="./leaflet/leaflet.js"></script>-->
+    <!--<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='leaflet/leaflet.css') }}"
+    />
+    <script src="{{ url_for('static', filename='leaflet/leaflet.js') }}"></script>
+  </head>
+  <body>
+    <h1>Data Sending and Saving Page</h1>
+    <p>{{data}}</p>
+    <button onclick="saveData()">Save Data</button>
+    <button onclick="listData()">list</button>
+    <button onclick="get()">get</button>
+    <button onclick="sendData()">send</button>
+    <button onclick="clearData()">Clear Data</button>
+    <button onclick="updateData()">Update Data</button>
+
+    <input type="text" id="shelterToUpdate" placeholder="Enter Shelter Name" />
+    <input
+      type="text"
+      id="newNumOfPeople"
+      placeholder="Enter New Num of People"
+    />
+    <button onclick="updateNumOfPeople()">Update Num of People</button>
+
+    <div id="map" style="height: 500px"></div>
+
+    <script>
+      function updateNumOfPeople() {
+        const shelterToUpdate = document.getElementById("shelterToUpdate").value;
+        const newNumOfPeople = document.getElementById("newNumOfPeople").value;
+            // 文字列から数値に変換
+        const newNumOfPeopleAsNumber = parseInt(newNumOfPeople, 10);
+
+        if (!shelterToUpdate || !newNumOfPeople) {
+          alert("Please enter Shelter Name and New Num of People.");
+          return;
+        }
+
+        const existingData = JSON.parse(localStorage.getItem("aaa")) || {};
+
+        // シェルターごとに最新のデータを保持するオブジェクトを作成
+        const latestDataByShelter = {};
+        for (const key in existingData) {
+          const data = existingData[key];
+          const shelter = data.shelter;
+          if (!(shelter in latestDataByShelter) || data.timestamp > latestDataByShelter[shelter].timestamp) {
+            latestDataByShelter[shelter] = data;
+          }
+        }
+
+        // 指定されたシェルターのデータを更新
+        if (shelterToUpdate in latestDataByShelter) {
+          latestDataByShelter[shelterToUpdate]["Num of People"] = newNumOfPeopleAsNumber;
+          latestDataByShelter[shelterToUpdate].timestamp = new Date().toLocaleString(); // 現在の時刻に更新
+        } else {
+          alert("Shelter not found.");
+          return;
+        }
+
+        // 新しいデータのみを保持する
+        const updatedData = {};
+        for (const shelter in latestDataByShelter) {
+          updatedData[generateRandomKey()] = latestDataByShelter[shelter];
+        }
+
+        localStorage.setItem("aaa", JSON.stringify(updatedData));
+        alert("Num of People Updated");
+      }
+
+        function saveData() {
+          const randomKey = generateRandomKey();
+          const existingData = JSON.parse(localStorage.getItem("aaa")) || {};
+          const currentData = JSON.parse('{{ data | tojson | safe | replace("&quot;", "\\\"") }}');
+
+          // 新しい配列を作成
+          const resultArray = [];
+          // 各キーの値を配列に追加
+          for (const key in currentData) {
+            resultArray.push(currentData[key]);
+          }
+          // 結果をコンソールに表示
+          console.log(resultArray[0]);
+
+          // for文を使用して各配列の数だけexistingDataに追加
+          for (let i = 0; i < resultArray.length; i++) {
+            existingData[generateRandomKey()] = resultArray[i];
+          }
+
+          // ローカルストレージにデータを保存
+          localStorage.setItem("aaa", JSON.stringify(existingData));
+
+          alert("Data saved locally with random key: " + randomKey + ":" + JSON.stringify(currentData));
+      }
+
+        function get() {
+          const savedData = localStorage.getItem("aaa");
+          alert("Saved Data: " + savedData);
+        }
+
+        function generateRandomKey() {
+          // 適当な乱数生成（ここではシンプルに Math.random() を使用しています）
+          return (
+            Math.random().toString(36).substring(2, 15) +
+            Math.random().toString(36).substring(2, 15)
+          );
+        }
+
+        function listData() {
+          // ローカルストレージからデータを取得
+          const savedData = localStorage.getItem("aaa");
+
+          if (!savedData) {
+            alert("No data saved yet.");
+            return;
+          }
+
+          // データをパースして整形して表示
+          const parsedData = JSON.parse(savedData);
+          let output = "<h2>Saved Data List:</h2><ul>";
+          for (const key in parsedData) {
+            output += "<li>" + key + ": " + JSON.stringify(parsedData[key]) + "</li>";
+          }
+          output += "</ul>";
+
+          // 綺麗に整形されたデータを表示
+          document.body.innerHTML += output;
+        }
+
+        function updateData() {
+          const existingData = JSON.parse(localStorage.getItem("aaa")) || {};
+
+          // シェルターごとに最新のデータを保持するオブジェクトを作成
+          const latestDataByShelter = {};
+          for (const key in existingData) {
+            const data = existingData[key];
+            const shelter = data.shelter;
+            if (!(shelter in latestDataByShelter) || data.timestamp > latestDataByShelter[shelter].timestamp) {
+              latestDataByShelter[shelter] = data;
+            }
+          }
+
+          // 新しいデータのみを保持する
+          const updatedData = {};
+          for (const shelter in latestDataByShelter) {
+            updatedData[generateRandomKey()] = latestDataByShelter[shelter];
+          }
+
+          localStorage.setItem("aaa", JSON.stringify(updatedData));
+          alert("Data Updated");
+        }
+
+        function sendData() {
+          const send_data = localStorage.getItem("aaa");
+          console.log("send_data:", send_data);
+          //fetch("http://172.16.0.1:8001/save_data", {
+          fetch("http://127.0.0.1:8001/save_data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ data: send_data }),
+          })
+            .then((response) => response.text())
+            .then((data) => {
+              console.log(data);
+              location.reload();
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+        function clearData() {
+          localStorage.removeItem("aaa");
+          alert("Local Storage Data Cleared");
+        }
+        // window.addEventListener('load', function() {saveData();});
+        const jsonDataFromFlask = {{ data | tojson | safe }};
+        // ローカルストレージにデータを保存
+        localStorage.setItem('flaskData', JSON.stringify(jsonDataFromFlask));
+        // 確認のためコンソールに表示
+        console.log('Data saved to local storage:', JSON.stringify(jsonDataFromFlask));
+    </script>
+    <script>
+      //Map関連
+      var map = L.map("map").setView([34.697005, 135.749709], 16);
+      L.tileLayer("static/tiles/{z}/{x}/{y}.png", {
+        maxZoom: 16,
+        minZoom: 2,
+        tileSize: 512,
+        zoomOffset: -1,
+      }).addTo(map);
+
+      // 既存のマーカーをクリアする関数
+      function clearMarkers() {
+        map.eachLayer(function (layer) {
+          if (layer instanceof L.Marker) {
+            map.removeLayer(layer);
+          }
+        });
+      }
+
+      // ローカルストレージからデータを取得してマーカーを表示する関数
+      // ファイルからデータを読み込んでマーカーを表示する関数
+      function displayMarkersFromFile() {
+        clearMarkers(); // 既存のマーカーをクリア
+
+        fetch("/static/save_data.json") // /static/ を追加して静的フォルダ内のファイルにアクセス
+          .then((response) => response.json())
+          .then((data) => {
+            // Iterate through each data entry in the JSON
+            for (const key in data) {
+              const shelterData = data[key];
+              const lat = shelterData.latitude;
+              const lng = shelterData.longitude;
+              const shelterName = shelterData.shelter;
+              const timestamp = shelterData.timestamp;
+              const numOfPeople = shelterData["Num of People"];
+
+              // Popup content
+              const popupContent = `
+    <strong>${shelterName}</strong><br>
+    Timestamp: ${timestamp}<br>
+    Number of People: ${numOfPeople}
+  `;
+
+              // Add marker to the map
+              L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
+            }
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      }
+
+      // ロード時にマーカーを表示
+      window.addEventListener("load", function () {
+        displayMarkersFromFile();
+      });
+    </script>
+  </body>
+</html>
