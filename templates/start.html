@@ -16,6 +16,7 @@
       }
     </script>
   </head>
+  <body>
   <script>
     window.onload = function() {
       // Iterate through shelter_list and upload local storage data to server
@@ -50,14 +51,5 @@
     };
   </script>
   <body>
-    <ul>
-      {% for location in shelter_list %}
-      <script>
-        var specificName = "{{ location.shelter }}";
-        var existingData = JSON.parse(localStorage.getItem(specificName)) || {};
-        //console.log(existingData);
-      </script>
-      {% endfor %}
-    </ul>
   </body>
 </html>
