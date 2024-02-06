@@ -13,7 +13,7 @@
   <body>
     <script>
       {% for location in location_data %}
-        shelter = {{location.shelter}};
+        shelter = "{{location.shelter}}";
 
       {% endfor %}
     </script>
@@ -33,7 +33,7 @@
     下記の書き方に続く形で、ローカルストレージのデータをapp.pyに届けたい
     -->
     <div id="map" style="width: 800px; height: 600px"></div>
-    <form action="/add" method="POST">
+    <form id="form" action="/add" method="POST">
       <label for="shelter">Choose a shlter:</label>
       <select id="shlter" name="shelter">
         <option value="A">A</option>
@@ -42,8 +42,15 @@
       </select>
       <label for="num">Num:</label>
       <input type="text" name="num" placeholder="input todo!!" />
+      <input type="hidden" id="user" name="user" />
       <input type="submit" value="Add" />
     </form>
+    <script>
+      document.getElementById("form").onsubmit = function () {
+        var localData = JSON.parse(localStorage.getItem("ID")) || {};
+        document.getElementById("user").value = localData.name;
+      };
+    </script>
 
     {% for d in data %}
     <p>{{d.id}} : {{d.shelter}} : {{d.num}} :{{d.created_at}}</p>
