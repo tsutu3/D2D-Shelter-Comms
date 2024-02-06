@@ -116,7 +116,9 @@ def add():
     created_at = datetime.now(pytz.timezone("Asia/Tokyo"))
     shelter = request.form['shelter']
     num = request.form['num']
-    new_shelter = Shelter(shelter=shelter,num=num,created_at=created_at)
+    name = request.form['user']
+    print(name)
+    new_shelter = Shelter(shelter=shelter,num=num,created_at=created_at,user=name)
     db.session.add(new_shelter)
     db.session.commit()
     return redirect(url_for('index'))

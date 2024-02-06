@@ -17,39 +17,40 @@
     </script>
   </head>
   <body>
-  <script>
-    window.onload = function() {
-      // Iterate through shelter_list and upload local storage data to server
-      {% for location in shelter_list %}
-        var specificName = "{{ location.shelter }}";
-        var existingData = JSON.parse(localStorage.getItem(specificName)) || {};
+    <script>
+      window.onload = function() {
+        // Iterate through shelter_list and upload local storage data to server
+        {% for location in shelter_list %}
+          var specificName = "{{ location.shelter }}";
+          var existingData = JSON.parse(localStorage.getItem(specificName)) || {};
+          var userData = JSON.parse(localStorage.getItem("ID")) || {};
 
-        // Check if there is data in local storage for the specific shelter
-        if (Object.keys(existingData).length > 0) {
-          // Use fetch to send data to the server
-          fetch("/upload_data", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              shelter: specificName,
-              data: existingData,
-            }),
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log("Data uploaded successfully:", data);
-            // Optional: Clear local storage for the specific shelter after upload
-            localStorage.removeItem(specificName);
-          })
-          .catch(error => {
-            console.error("Error uploading data:", error);
-          });
-        }
-      {% endfor %}
-    };
-  </script>
-  <body>
+          // Check if there is data in local storage for the specific shelter
+          if (Object.keys(existingData).length > 0) {
+            // Use fetch to send data to the server
+            fetch("/upload_data", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                shelter: specificName,
+                data: existingData,
+                user: userData
+              }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log("Data uploaded successfully:", data);
+              // Optional: Clear local storage for the specific shelter after upload
+              localStorage.removeItem(specificName);
+            })
+            .catch(error => {
+              console.error("Error uploading data:", error);
+            });
+          }
+        {% endfor %}
+      };
+    </script>
   </body>
 </html>
