@@ -28,6 +28,8 @@ class Shelter(db.Model):
     shelter = db.Column(db.String(128), nullable=False)
     num = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone("Asia/Tokyo")))
+    user = db.Column(db.String(128), nullable=False)
+    ## シェルターのユーザ情報を追加
 
 class ShelterLocation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -69,11 +71,12 @@ def upload_data():
         shelter = data['shelter']
         uploaded_data = data['data']
         uploaded_data['created_at'] = datetime.strptime(uploaded_data['created_at'], '%Y-%m-%d %H:%M:%S.%f')
+        user = data['user']
         print(data)
         # TODO: ここでデータを処理するための任意の処理を実装
 
         # データベースに保存
-        new_entry = Shelter(shelter=shelter, num=uploaded_data['num'], created_at=uploaded_data['created_at'])
+        new_entry = Shelter(shelter=shelter, num=uploaded_data['num'], created_at=uploaded_data['created_at'],user=user['name'])
         db.session.add(new_entry)
         db.session.commit()
 
