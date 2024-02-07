@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Sending and Saving Page</title>
+    <title>User information</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='leaflet/leaflet.css') }}"
@@ -16,24 +16,53 @@
   </head>
 
   <body>
-    <a href="{{ url_for('add_location') }}">Add Shelter Location</a>
-    <a href="{{ url_for('locations') }}">シェルターの位置</a>
-    <div id="map" style="width: 800px; height: 600px"></div>
-    <form id="form" action="/add" method="POST">
-      <label for="shelter">Choose a shlter:</label>
-      <select id="shlter" name="shelter">
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <label for="num">Num:</label>
-      <input type="text" name="num" placeholder="input todo!!" />
-      <input type="hidden" id="user" name="user" />
-      <input type="submit" value="Add" />
-    </form>
+    <div class="a">
+      <header class="header">
+        <h1>
+          <a href="#"><img class="logo" src="img/logo.png" alt="会社ロゴ" /></a>
+        </h1>
+        <nav class="h-nav">
+          <ul class="b">
+            <li><a href="#">menu1</a></li>
+            <li><a href="#">menu2</a></li>
+            <li><a href="#">menu3</a></li>
+            <li><a href="#">menu4</a></li>
+            <li><a href="#">menu5</a></li>
+            <li><a href="#">menu6</a></li>
+          </ul>
+        </nav>
+        <div class="header-links">
+          <a href="{{ url_for('add_location') }}">避難所情報追加</a>
+          <a href="{{ url_for('locations') }}">シェルターの位置</a>
+        </div>
+      </header>
+      <div class="c">
+        <main class="main">
+          <div id="map" style="width: 800px; height: 600px"></div>
+        </main>
+        <aside class="side">サイド</aside>
+      </div>
+      <footer class="footer">
+        <form id="form" action="/add" method="POST">
+          <label for="shelter">Choose a shlter:</label>
+          <select id="shlter" name="shelter">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
+          <label for="num">Num:</label>
+          <input type="text" name="num" placeholder="input todo!!" />
+          <input type="hidden" id="user" name="user" />
+          <input type="submit" value="Add" />
+        </form>
+        {% for d in data %}
+        <p>{{d.id}} : {{d.shelter}} : {{d.num}} :{{d.created_at}}</p>
+        <a href="/del_body/{{ d.id }}">[ delete ]</a>
+        {% endfor %}
+      </footer>
+    </div>
+
     {% for d in data %}
-    <p>{{d.id}} : {{d.shelter}} : {{d.num}} :{{d.created_at}}</p>
-    <a href="/del_body/{{ d.id }}">[ delete ]</a>
     <script>
       document.getElementById("form").onsubmit = function () {
         var localData = JSON.parse(localStorage.getItem("ID")) || {};
