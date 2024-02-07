@@ -8,30 +8,16 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='leaflet/leaflet.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
     <script src="{{ url_for('static', filename='leaflet/leaflet.js') }}"></script>
   </head>
-  <body>
-    <script>
-      {% for location in location_data %}
-        shelter = "{{location.shelter}}";
 
-      {% endfor %}
-    </script>
+  <body>
     <a href="{{ url_for('add_location') }}">Add Shelter Location</a>
     <a href="{{ url_for('locations') }}">シェルターの位置</a>
-    <!-- TODO
-    最初のアクセスした段階でローカルストレージのデータをアップロード
-    1. テーブルから、アクセスするshelterの情報を取得
-    2. キーから、各シェルターの値を取得
-    3. 各値をアップロード
-    User
-    app.py側で、新たなルートを作成し、ページにアクセスした段階で、ローカルストレージのデータをサーバにアップロードしたい
-    ローカルストレージには下記のようなデータがある。
-    キー：”A"
-    値：{"id":"174831","num":"12","created_at":"2028-01-16 23:47:11.609774"}
-
-    下記の書き方に続く形で、ローカルストレージのデータをapp.pyに届けたい
-    -->
     <div id="map" style="width: 800px; height: 600px"></div>
     <form id="form" action="/add" method="POST">
       <label for="shelter">Choose a shlter:</label>
@@ -45,18 +31,14 @@
       <input type="hidden" id="user" name="user" />
       <input type="submit" value="Add" />
     </form>
+    {% for d in data %}
+    <p>{{d.id}} : {{d.shelter}} : {{d.num}} :{{d.created_at}}</p>
+    <a href="/del_body/{{ d.id }}">[ delete ]</a>
     <script>
       document.getElementById("form").onsubmit = function () {
         var localData = JSON.parse(localStorage.getItem("ID")) || {};
         document.getElementById("user").value = localData.name;
       };
-    </script>
-
-    {% for d in data %}
-    <p>{{d.id}} : {{d.shelter}} : {{d.num}} :{{d.created_at}}</p>
-    <a href="/del_body/{{ d.id }}">[ delete ]</a>
-    <script>
-      //alert("tes");
       var specificName = "{{ d.shelter }}";
       // 既存のローカルストレージのデータを取得
       var existingData = JSON.parse(localStorage.getItem(specificName)) || {};
@@ -82,9 +64,6 @@
       }
     </script>
     {% endfor %}
-    <!-- TODO 
-      ここでローカルストレージをupload 
-    -->
 
     <script>
       // TODO
@@ -96,15 +75,11 @@
         tileSize: 512,
         zoomOffset: -1,
       }).addTo(map);
-
-      // Plot ShelterLocation coordinates on the map
       {% for location in location_data %}
         var marker = L.marker([{{ location.latitude }}, {{ location.longitude }}]).addTo(map);
         marker.bindPopup("Shelter: {{ location.shelter }}<br>Latitude: {{ location.latitude }}<br>Longitude: {{ location.longitude }}");
       {% endfor %}
-        // Plot Shelter data on the map
         {% for d in data %}
-        // Assume there is a corresponding ShelterLocation for each shelter in data
         var shelterLocation = {% for location in location_data %}{% if location.shelter == d.shelter %}{ "latitude": {{ location.latitude }}, "longitude": {{ location.longitude }} }{% endif %}{% endfor %};
 
         if (shelterLocation) {
