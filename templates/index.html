@@ -18,7 +18,7 @@
   <body>
     <header class="header">
       <h1 class="title">避難所情報</h1>
-      <nav class="h-nav">
+      <nav class="nav">
         <ul>
           <li><a href="{{ url_for('add_location') }}">避難所情報追加</a></li>
           <li><a href="{{ url_for('locations') }}">シェルターの位置</a></li>
@@ -36,14 +36,15 @@
         <!-- 避難所情報 -->
         <section class="data-output">
           <h2>避難所情報</h2>
+          <div class="output">
           {% for d in data %}
-          <div>
+          <div class="shelter-info">
             <h3>避難所{{d.shelter}}</h3>
             <p>人数：{{d.num}}人</p>
             <p>最終更新時間:{{d.created_at}}</p>
             <!-- <a href="/del_body/{{ d.id }}">[ delete ]</a> -->
-          </div>
           {% endfor %}
+          </div>
         </section>
         <!-- form入力画面 -->
         <section class="form-group">
@@ -63,7 +64,7 @@
         </section>
       </article>
     </main>
-    <aside class="side">サイド</aside>
+    <aside class="side"></aside>
 
     <footer class="footer"></footer>
 
