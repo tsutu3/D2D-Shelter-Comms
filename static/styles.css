@@ -1,0 +1,90 @@
+@charset "UTF-8";
+
+/* 共通部分 */
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  background-color: #f2f2f2;
+}
+
+/* ヘッダー */
+.header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+}
+
+/* ナビゲーション */
+.nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+.nav ul li:last-child {
+  margin-right: 0; /* 最後のリンクの右側の余白を削除 */
+}
+
+.nav ul li a {
+  color: #fff; /* リンクの色を白に設定 */
+  text-decoration: none;
+}
+
+.nav ul li a:hover {
+  text-decoration: underline; /* ホバー時に下線を表示 */
+}
+
+/* メインコンテンツ */
+.main {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.map,
+.data-output,
+.form-group {
+  flex: 1 1 300px;
+  margin: 10px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.map h2,
+.data-output h2,
+.form-group h2 {
+  margin-top: 0;
+}
+
+.output {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.shelter-info {
+  margin-bottom: 20px;
+}
+
+.shelter-info h3 {
+  margin-top: 0;
+}
+
+/* サイドバー */
+.side {
+  flex: 0 1 250px;
+  margin: 10px;
+  padding: 20px
+
