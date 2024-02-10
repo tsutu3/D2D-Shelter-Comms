@@ -1,6 +1,7 @@
-from flask import Flask, render_template,request, send_from_directory, redirect, url_for, jsonify
+from flask import Flask, render_template,request, send_from_directory, redirect, url_for, jsonify,session,flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
+from functools import wraps
 from datetime import timedelta, timezone,datetime
 import json
 import os
@@ -16,6 +17,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///body.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ## log出力
 app.config['SQLALCHEMY_ECHO']=False
+# シークレットキーの設定
+app.config['SECRET_KEY'] = 'test'
 
 db = SQLAlchemy(app)
 
@@ -41,6 +44,11 @@ class User_Info(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     age = db.Column(db.String(128), nullable=False)
+    
+# class AdminUser(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(64), unique=True, nullable=False)
+#     password = db.Column(db.String(128), nullable=False)
 
 @app.route('/')
 def start():
@@ -156,6 +164,46 @@ def add_location():
         return redirect(url_for('locations'))
 
     return render_template('add_location.html')
+
+# ログイン関連
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # ユーザーの存在を確認
+        # user = AdminUser.query.filter_by(username=username, password=password).first()
+        if username == "test" and password == "test":
+            # ログイン成功
+            # session['admin_user_id'] = user.id
+            session['admin_user_id'] = "test"
+            return redirect(url_for('admin_dashboard'))
+        else:
+            # ログイン失敗
+            flash('Invalid username or password', 'error')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('admin_user_id', None)
+    return redirect(url_for('index'))
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'admin_user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    # 管理者専用ページのロジックをここに記述
+    return render_template('admin_dashboard.html')
 
 
 if __name__ == '__main__':
