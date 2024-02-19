@@ -222,6 +222,26 @@ def admin_dashboard():
 def test():
     return render_template('test.html')
 
+# テスト
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+@app.route('/board')
+def board():
+    messages = Message.query.all()
+    return render_template('board.html', messages=messages)
+
+@app.route('/post_message', methods=['POST'])
+def post_message():
+    text = request.form['message']
+    new_message = Message(text=text)
+    db.session.add(new_message)
+    db.session.commit()
+    return redirect(url_for('board'))
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
