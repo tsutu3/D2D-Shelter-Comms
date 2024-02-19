@@ -1,1 +1,63 @@
-test
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <title>Admin Dashboard</title>
+  </head>
+  <body>
+    <h1>Admin Dashboard</h1>
+
+    <!-- テーブル1: 全てのシェルターの情報を出力 -->
+    <h2>All Shelter Information</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Shelter</th>
+          <th>Number</th>
+          <th>Created At</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for shelter in shelters %}
+        <tr>
+          <td>{{ shelter.id }}</td>
+          <td>{{ shelter.shelter }}</td>
+          <td>{{ shelter.num }}</td>
+          <td>{{ shelter.created_at }}</td>
+          <td>{{ shelter.user }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- テーブル2: 各シェルターの一番新しい情報のみを出力 -->
+    <h2>Newest Information for Each Shelter</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Shelter</th>
+          <th>Number</th>
+          <th>Created At</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for shelter, newest_info in newest_shelter_info.items() %}
+        <tr>
+          <td>{{ shelter }}</td>
+          <td>{{ newest_info.num }}</td>
+          <td>{{ newest_info.created_at }}</td>
+          <td>{{ newest_info.user }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from functools import wraps
 from datetime import timedelta, timezone,datetime
+from collections import defaultdict
+
 import json
 import os
 import pytz
@@ -202,9 +204,23 @@ def login_required(f):
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
-    # 管理者専用ページのロジックをここに記述
-    return render_template('admin_dashboard.html')
+    # データベースの全ての避難所情報を取得
+    shelters = Shelter.query.all()
+    
+    # 各シェルターごとに一番新しい情報を取得
+    newest_shelter_info = defaultdict(lambda: None)
+    for shelter in shelters:
+        if newest_shelter_info[shelter.shelter] is None or shelter.created_at > newest_shelter_info[shelter.shelter].created_at:
+            newest_shelter_info[shelter.shelter] = shelter
+    
+    # シェルターを頭文字順に並べる
+    newest_shelter_info = dict(sorted(newest_shelter_info.items()))
+    
+    return render_template('admin_dashboard.html', shelters=shelters, newest_shelter_info=newest_shelter_info)
 
+@app.route('/test')
+def test():
+    return render_template('test.html')
 
 if __name__ == '__main__':
     with app.app_context():
