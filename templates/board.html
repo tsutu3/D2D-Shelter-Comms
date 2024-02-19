@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='test.css') }}"
+    />
+    <title>掲示板</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>掲示板</h1>
+      <div id="messages">
+        <!-- メッセージ一覧 -->
+        {% for message in messages %}
+        <p>{{ message.text }}</p>
+        <p>{{ message.created_at }}</p>
+        {% endfor %}
+      </div>
+      <form action="/post_message" method="post">
+        <label for="message">メッセージを投稿:</label><br />
+        <textarea id="message" name="message" rows="4" cols="50"></textarea
+        ><br />
+        <input type="submit" value="投稿" />
+      </form>
+    </div>
+  </body>
+</html>
