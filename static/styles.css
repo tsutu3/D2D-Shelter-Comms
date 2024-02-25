@@ -1,110 +1,233 @@
 @charset "UTF-8";
-
-/* 共通部分 */
-html {
-  font-size: 16px;
+*{box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  background-color: #f2f2f2;
+	margin: 0;
+	color: #222222; 	/* ヘッダーとフッター以外の文字色 */
+	font-family: sans-serif;
+	background: #333;
+  justify-content: center;
+}
+
+/* リセット */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+  text-align: center;
+}
+
+h2{
+	font-weight: bold;
+  font-size: 24px;
+}
+
+p {
+	line-height: 1.8;	/* 行間はpの1.8倍 */
+  font-size: 18px;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+	transition: all 0.3s;
+}
+
+a:hover {
+	font-weight: bold;
+	color: #a1a1a1;
 }
 
 /* ヘッダー */
-.header {
-  background-color: #333;
+header {
+  width: auto;
+  flex: 1 1 300px;
+  background-color: #000000;
   color: #fff;
   padding: 10px 0;
   text-align: center;
 }
 
 /* ナビゲーション */
-.nav ul {
+nav {
+  display: flex;
+  flex: 1 1 150px;
+  background-color: #000000;
+  color: #fff;
+  font-weight: normal;
+  text-align: center;
+}
+
+nav ul {
   list-style-type: none;
-  padding: 0;
   margin: 0;
+  padding: 0; /* リストのデフォルトの余白を削除 */
+  display: flex; /* リストを横並びにする */
+  justify-content: center;
 }
 
-.nav ul li {
-  display: inline;
-  margin-right: 20px;
+nav ul li {
+  background-color: #3d3d3d;
+  margin-right: 0; /* 各リストアイテムの右側の余白をゼロにする */
 }
 
-.nav ul li:last-child {
-  margin-right: 0; /* 最後のリンクの右側の余白を削除 */
-}
-
-.nav ul li a {
-  color: #fff; /* リンクの色を白に設定 */
+nav a {
+  display: block;
+  padding: 10px;
+  color: #fff;
   text-decoration: none;
+  box-sizing: border-box; /* ボックスサイズを要素の内側の余白とボーダーを含むようにする */
 }
 
-.nav ul li a:hover {
-  text-decoration: underline; /* ホバー時に下線を表示 */
-}
 
 /* メインコンテンツ */
-.main {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+main {
+  display: block;
   flex-wrap: wrap;
-  padding: 20px;
 }
-
-.map,
-.data-output,
-.form-group {
+section {
+  display: block;
   flex: 1 1 300px;
-  margin: 10px;
-  padding: 20px;
+  margin: 1%;
+  padding: 15px;
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-.map h2,
-.data-output h2,
-.form-group h2 {
-  margin-top: 0;
+.latest-info{ /*最新情報*/
+  float: left;
+  width: 31%;
+  height: 500px;
+}
+.map{ /*マップ*/
+  float: right;
+  width: 65%;
+  height: 500px;
+  align-items: center;
 }
 
+.output,
+.coment {
+  clear: both;
+  text-align: center;
+  position: relative; /* 相対位置指定 */
+}
+
+/*掲示板投稿欄*/
+.container{
+  max-height: 500px;
+  overflow-y: auto; /* 縦方向のスクロールバーを表示し、必要に応じて表示させる */
+  line-height: 1.5em;
+  padding: 5px;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.message-box {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+/*タイムログ*/
+#messages p:nth-child(even) {
+  color: #5b5b5b;
+  font-size: small;
+  font-style: italic;
+  text-align: end;
+}
+
+/*避難場所情報*/
+.shelter-info h3 {
+  clear: both;
+  margin-top: 0;
+}
+/*タイムログ*/
+.shelter-info p:nth-child(5) {
+  color: #5b5b5b;
+  font-size: small;
+  font-style: italic;
+  text-align: center;
+}
+.data-output{
+  text-align: center;
+}
+/* 各避難所の情報を横並びに配置し、均等に配置 */
 .output {
-  max-height: 300px;
-  overflow-y: auto;
+    display: flex; /* フレックスコンテナとして設定 */
+    flex-wrap: wrap; /* 要素が行を超える場合に折り返すように設定 */
+    justify-content: space-around; /* 要素をコンテナ内で均等に配置 */
 }
 
 .shelter-info {
-  margin-bottom: 20px;
+    width: calc(30% - 20px); /* 幅を計算して設定し、間隔を20pxに設定 */
+    border: 1px solid #ccc; /* 枠線を追加 */
+    border-radius: 5px; /* 角丸を設定 */
+    padding: 10px; /* 内側の余白を追加 */
+    margin-bottom: 20px; /* 下側の余白を追加 */
+    box-sizing: border-box; /* 枠線と余白を要素のサイズに含める */
 }
 
-.shelter-info h3 {
-  margin-top: 0;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* ボタンの幅 */
+  height: 40px; /* ボタンの高さ */
+  position: absolute; /* 絶対位置指定 */
+  top: 20px; /* 下側からの位置調整 */
+  right: 20px; /* 右側からの位置調整 */
+  border-radius: 50%; /* ボーダー半径を50%に設定して正円にする */
+  text-decoration: none; /* ボタンのデフォルトの下線を削除 */
+  background-color: #007bff; /* ボタンの背景色 */
+  color: #ffffff; /* ボタンのテキスト色 */
+  border: none; /* ボーダーを削除 */
+  cursor: pointer; /* ホバーエフェクトを設定 */
+  transition: background-color 0.3s ease; /* 背景色のトランジション効果 */
+}
+.btn:hover {
+  background-color: #0056b3; /* ホバー時の背景色 */
+}
+.btn i {
+  margin-left: 2px; /* フォントアイコンの左マージン */
+}
+#message{
+  font-family: "メイリオ", sans-serif;
+}
+#message-form {
+  display: none; /* メッセージ投稿フォームを非表示にする */
 }
 
-/* サイドバー */
-.side {
-  flex: 0 1 250px;
-  margin: 10px;
-  padding: 20px;
+.show-form #message-form {
+  display: block; /* ボタンがクリックされたらメッセージ投稿フォームを表示する */
 }
-
-/* テーブル */
-table {
-  border-collapse: collapse;
-  width: 100%;
+#wrapper{
+  width: 1000px;
+  margin: 0 auto;
+  background-color: #333;
+  font-size: 16px;
+  font-family: "メイリオ", sans-serif;
+  font-weight: normal;
 }
-
-table, th, td {
-  border: 1px solid #ddd;
+.w-container{
+  /*全体の設定を最後指定するけどまだ書いてない。*/
 }
-
-th, td {
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f2f2f2;
-  color: #333;
+/*フッター*/
+footer {
+  clear: both;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #000000;
+  color: #fff;
+  font-weight: normal;
+  text-align: center;
 }
