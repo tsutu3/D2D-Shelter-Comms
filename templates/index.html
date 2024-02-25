@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User information</title>
+    <title>Shelter information</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='leaflet/leaflet.css') }}"
@@ -16,57 +16,131 @@
   </head>
 
   <body>
-    <header class="header">
-      <h1 class="title">避難所情報</h1>
-      <nav class="nav">
-        <ul>
-          <li><a href="{{ url_for('add_location') }}">避難所情報追加</a></li>
-          <li><a href="{{ url_for('locations') }}">シェルターの位置</a></li>
-        </ul>
-      </nav>
-    </header>
+    <div id="wrapper">
+      <header>
+        <div class="w-container">
+          <h1 class="title">避難所情報</h1>
+        </div>
+      </header>
 
-    <main class="main">
-      <article>
-        <!-- map -->
-        <section class="map">
-          <h2>災害情報マップ</h2>
-          <div id="map" style="width: 850px; height: 600px"></div>
-        </section>
-        <!-- 避難所情報 -->
-        <section class="data-output">
-          <h2>避難所情報</h2>
-          <div class="output">
-          {% for d in data %}
-          <div class="shelter-info">
-            <h3>避難所{{d.shelter}}</h3>
-            <p>人数：{{d.num}}人</p>
-            <p>最終更新時間:{{d.created_at}}</p>
-            <!-- <a href="/del_body/{{ d.id }}">[ delete ]</a> -->
-          {% endfor %}
+      <nav>
+        <div class="w-container">
+          <ul>
+            <li><a href="{{ url_for('add_location') }}">...</a></li>
+            <li><a href="{{ url_for('locations') }}">...</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main>
+        <div class="w-container">
+          <!--最重要コンテンツ-->
+          <!-- 緊急情報 -->
+          <section class="latest-info">
+            <h2>！最新情報！</h2>
+            <br />
+            <p>情報掲載欄</p>
+            <br />
+            <p><i class="Date">Date.</i> 土砂災害警戒情報</p>
+          </section>
+          <!-- マップ -->
+          <section class="map">
+            <h2>災害情報マップ</h2>
+            <div id="map" style="width: 100%; height: 400px"></div>
+          </section>
+        </div>
+
+        <!--掲示板-->
+        <section class="coment">
+          <div class="w-container">
+            <h2>掲示板</h2>
+            <!-- ボタンをクリックしたらメッセージ投稿フォームを表示する -->
+            <a
+              href="#"
+              class="btn btn--circle btn--circle-c btn--shadow"
+              onclick="toggleForm()"
+              >+<i class="fas fa-arrow-up"></i
+            ></a>
+            <form action="/post_message" method="post">
+              <!--入力フォーム-->> <label for="message"></label><br />
+              <textarea
+                id="message"
+                name="message"
+                rows="3"
+                cols="100"
+                placeholder="メッセージを記入"
+              ></textarea
+              ><br />
+              <!-- 追加 -->
+              <input type="submit" value="投稿" />
+            </form>
+            <div class="container">
+              <div id="messages">
+                <!-- メッセージ一覧 -->
+                {% for message in messages %}
+                <div class="message-box">
+                  <p>{{ message.text }}</p>
+                  <p>{{ message.created_at }}</p>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
           </div>
         </section>
-        <!-- form入力画面 -->
-        <section class="form-group">
-          <h2>ユーザ情報入力</h2>
-          <form id="form" action="/add" method="POST">
-            <label for="shelter">Choose a shlter:</label>
-            <select id="shlter" name="shelter">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-            </select>
-            <label for="num">Num:</label>
-            <input type="text" name="num" placeholder="input todo!!" />
-            <input type="hidden" id="user" name="user" />
-            <input type="submit" value="Add" />
-          </form>
-        </section>
-      </article>
-    </main>
-    <aside class="side"></aside>
 
-    <footer class="footer"></footer>
+        <!--避難所詳細情報-->
+        <section class="data-output">
+          <div class="w-container">
+            <h2>避難所の詳細情報</h2>
+            <section class="form-group">
+              <!--避難所情報の入力欄-->
+              <form id="form" action="/add" method="POST">
+                <label for="shelter">Choose a shlter:</label>
+                <select id="shlter" name="shelter">
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                </select>
+                <label for="num">Num:</label>
+                <input type="text" name="num" placeholder="input number" />
+                <input type="hidden" id="user" name="user" />
+                <input type="submit" value="Add" />
+              </form>
+            </section>
+            <div class="output">
+              <!--避難所情報の出力欄-->
+              {% for d in data %}
+              <div class="shelter-info">
+                <h3>避難所{{d.shelter}}</h3>
+                <br />
+                <p>人数：{{d.num}}人</p>
+                <br />
+                <p>最終更新時間:{{d.created_at}}</p>
+                <!-- <a href="/del_body/{{ d.id }}">[ delete ]</a> -->
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside></aside>
+
+      <footer>
+        <div class="w-container">
+          <p>避難所情報</p>
+        </div>
+      </footer>
+    </div>
+
+    <!--ここまでここまでここまでここまでここまで-->
+
+    <script>
+      function toggleForm() {
+        var form = document.getElementById("message-form");
+        form.classList.toggle("show-form");
+      }
+    </script>
 
     {% for d in data %}
     <script>

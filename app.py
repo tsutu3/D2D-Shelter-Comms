@@ -119,7 +119,8 @@ def index():
         data.append(latest_entry)
         
     location_data = ShelterLocation.query.all()
-    return render_template('index.html',data=data,location_data=location_data)
+    messages = Message.query.all()
+    return render_template('index.html',data=data,location_data=location_data,messages=messages)
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -232,7 +233,7 @@ class Message(db.Model):
 @app.route('/board')
 def board():
     messages = Message.query.all()
-    return render_template('board.html', messages=messages)
+    return render_template('index.html', messages=messages)
 
 @app.route('/post_message', methods=['POST'])
 def post_message():
@@ -240,7 +241,7 @@ def post_message():
     new_message = Message(text=text)
     db.session.add(new_message)
     db.session.commit()
-    return redirect(url_for('board'))
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     with app.app_context():
