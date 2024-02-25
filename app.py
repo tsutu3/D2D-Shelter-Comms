@@ -80,7 +80,7 @@ def upload_data():
         data = request.json
         shelter = data['shelter']
         uploaded_data = data['data']
-        uploaded_data['created_at'] = datetime.strptime(uploaded_data['created_at'], '%Y-%m-%d %H:%M:%S.%f')
+        uploaded_data['created_at'] = datetime.strptime(uploaded_data['created_at'], '%Y-%m-%d %H:%M:%S')
         user = data['user']
         print(data)
         # TODO: ここでデータを処理するための任意の処理を実装
